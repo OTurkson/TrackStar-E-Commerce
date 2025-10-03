@@ -27,6 +27,21 @@ public class Product {
     @Column(name = "price")
     private BigDecimal price;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "stock_quantity", nullable = false, columnDefinition = "INT DEFAULT 0")
+    @Builder.Default
+    private Integer stockQuantity = 0;
+
+    @Column(name = "rating", columnDefinition = "DECIMAL(2,1) DEFAULT 0.0")
+    @Builder.Default
+    private BigDecimal rating = BigDecimal.valueOf(0.0);
+
+    @Column(name = "review_count", columnDefinition = "INT DEFAULT 0")
+    @Builder.Default
+    private Integer reviewCount = 0;
+
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "category_id")
     private Category category;

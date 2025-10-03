@@ -1,31 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Truck, Shield, Star } from 'lucide-react';
+import { productApi } from '../services/api';
 
 const Home = () => {
-  const featuredProducts = [
-    {
-      id: 1,
-      name: "Premium Wireless Headphones",
-      price: 199.99,
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop&crop=center",
-      rating: 4.8
-    },
-    {
-      id: 2,
-      name: "Smart Fitness Watch",
-      price: 299.99,
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop&crop=center",
-      rating: 4.6
-    },
-    {
-      id: 3,
-      name: "Stylish Backpack",
-      price: 79.99,
-      image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=300&fit=crop&crop=center",
-      rating: 4.7
-    }
-  ];
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await productApi.getAllProducts();
+        // Take first 3 products as featured
+        setFeaturedProducts(response.data.slice(0, 3));
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products');
+        // Fallback to static data if API fails
+        setFeaturedProducts([
+          {
+            id: 1,
+            name: "Premium Wireless Headphones",
+            price: 199.99,
+            imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop&crop=center",
+            rating: 4.8
+          },
+          {
+            id: 2,
+            name: "Smart Fitness Watch",
+            price: 299.99,
+            imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop&crop=center",
+            rating: 4.6
+          },
+          {
+            id: 3,
+            name: "Stylish Backpack",
+            price: 79.99,
+            imageUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=300&fit=crop&crop=center",
+            rating: 4.7
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
 
   return (
     <div>
@@ -88,29 +110,43 @@ const Home = () => {
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white">
             Featured Products
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredProducts.map((product) => (
-              <div key={product.id} className="card p-6 bg-white dark:bg-gray-800">
-                <img 
-                  src={product.image} 
-                  alt={product.name}
-                  className="w-full h-48 object-cover rounded-lg mb-4"
-                />
-                <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white">{product.name}</h3>
-                <div className="flex items-center mb-2">
-                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  <span className="text-sm text-gray-600 dark:text-gray-300 ml-1">{product.rating}</span>
+          {loading ? (
+            <div className="col-span-full text-center py-12">
+              <div className="text-gray-600 dark:text-gray-300">Loading featured products...</div>
+            </div>
+          ) : error ? (
+            <div className="col-span-full text-center py-12">
+              <div className="text-red-600 dark:text-red-400">{error}</div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {featuredProducts.map((product) => (
+                <div key={product.id} className="card p-6 bg-white dark:bg-gray-800">
+                  <img 
+                    src={product.imageUrl || product.image || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop&crop=center'} 
+                    alt={product.name}
+                    className="w-full h-48 object-cover rounded-lg mb-4"
+                  />
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white">{product.name}</h3>
+                  <div className="flex items-center mb-2">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <span className="text-sm text-gray-600 dark:text-gray-300 ml-1">
+                      {product.rating || 4.5}
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4">
+                    ${product.price}
+                  </p>
+                  <Link 
+                    to={`/products/${product.id}`}
+                    className="btn-primary w-full text-center block"
+                  >
+                    View Details
+                  </Link>
                 </div>
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4">${product.price}</p>
-                <Link 
-                  to={`/products/${product.id}`}
-                  className="btn-primary w-full text-center block"
-                >
-                  View Details
-                </Link>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           <div className="text-center mt-12">
             <Link 
               to="/products" 

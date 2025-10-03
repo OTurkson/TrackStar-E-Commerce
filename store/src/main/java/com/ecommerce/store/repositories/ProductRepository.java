@@ -5,14 +5,13 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import java.util.List;
+import java.util.Optional;
 
-public interface ProductRepository extends JpaRepository<Product, Byte> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
     @EntityGraph(attributePaths = "category")
     List<Product> findByCategoryId(Byte categoryId);
 
     @EntityGraph(attributePaths = "category")
     @Query("SELECT p from Product p")
     List<Product> findAllWithCategory();
-
-    Product findById(Long id);
 }
