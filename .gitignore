@@ -90,24 +90,23 @@ yarn-error.log*
 lerna-debug.log*
 pnpm-debug.log*
 
-# Frontend build artifacts
+# Frontend build artifacts (React + Vite)
 dist/
 build/
-.next/
-out/
-.nuxt/
-.cache/
-.parcel-cache/
 
 # Vite
 .vite/
 
-# Environment variables
+# Environment Variables (SECURITY CRITICAL - Enhanced)
 .env
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
+.env.staging
 
 # Frontend package manager locks
 package-lock.json
@@ -118,18 +117,33 @@ pnpm-lock.yaml
 *.tmp
 *.temp
 
-# Application specific
+# Application Configuration (SECURITY CRITICAL)
+application.properties
+application.yml
+application.yaml
 application-*.properties
 application-*.yml
 application-*.yaml
-!application.yml
-!application.yaml
-!application.properties
+bootstrap.properties
+bootstrap.yml
+bootstrap-*.yml
 
-# Database
+# Spring Boot specific
+spring.log
+application.pid
+
+# Database files (SECURITY CRITICAL)
 *.db
 *.sqlite
 *.sqlite3
+data/
+
+# Security & Secrets (SECURITY CRITICAL)
+secrets/
+*.secret
+*.credentials
+*.key
+*.pem
 
 # Logs
 logs/
